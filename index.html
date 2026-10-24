@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>인생네컷 포토부스</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a120b;--paper:#f4e9d0;--or:#ff6a00;--gr:#b8f34b;--night:#120b1c}
+*{box-sizing:border-box;margin:0}
+body{font:15px/1.5 "Gowun Dodum","Apple SD Gothic Neo",sans-serif;color:var(--ink);min-height:100vh;background:var(--night) radial-gradient(#ffffff14 1.2px,transparent 1.4px) 0 0/22px 22px}
+.bar{height:12px;background:repeating-linear-gradient(-45deg,var(--or) 0 14px,var(--ink) 14px 28px)}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px 20px 12px;max-width:1040px;margin:0 auto}
+h1{font:28px/1 "Black Han Sans",sans-serif;color:var(--paper);letter-spacing:.5px;text-shadow:3px 3px 0 var(--or)}
+h1 small{display:block;font:12px "Gowun Dodum";letter-spacing:3px;color:var(--gr);text-shadow:none;margin-bottom:6px}
+#prog{display:flex;gap:6px;list-style:none;padding:0}
+#prog li{font:13px "Black Han Sans";padding:3px 10px;border:2px dashed #f4e9d055;color:#f4e9d088}
+#prog li.done{border-style:solid;color:var(--paper)}
+#prog li.on{background:var(--gr);border:2px solid var(--ink);color:var(--ink);transform:rotate(-2deg)}
+main{max-width:1040px;margin:0 auto;padding:10px 16px 50px}
+.step{display:none}.step.on{display:block}
+.card,.ctl{background:var(--paper);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--or);padding:20px;position:relative}
+.card::before{content:"";position:absolute;top:-14px;left:24px;width:70px;height:24px;background:#ffd23fcc;transform:rotate(-4deg);border:2px solid #0002}
+h2{font:19px "Black Han Sans";margin:14px 0 8px}h2:first-child{margin-top:4px}
+h3{grid-column:1/-1;font:14px "Black Han Sans";margin:10px 0 0;color:#a14100}
+.opts,.chips,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.b,.btn{font:inherit;font-weight:700;color:var(--ink);background:var(--paper);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:7px 14px;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.b:active:not(:disabled){transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.b.on{background:var(--ink);color:var(--gr)}
+.b.pri{background:var(--or);color:#fff}
+.b:disabled{opacity:.45;cursor:not-allowed}
+.chips .b{padding:5px 11px;font-size:13px}
+.chips .b:nth-child(odd){transform:rotate(-1deg)}
+.row{margin-top:18px}
+.deco{display:grid;gap:22px;align-items:start}
+@media(min-width:780px){.deco{grid-template-columns:minmax(0,1fr) 360px}}
+.cam{position:relative;aspect-ratio:4/3;background:#000;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--or);overflow:hidden}
+#live{width:100%;height:100%;display:block}
+#vid{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none}
+#cd{position:absolute;inset:0;display:grid;place-items:center;font:150px "Black Han Sans";color:var(--paper);-webkit-text-stroke:5px var(--ink);opacity:0;pointer-events:none}
+#cd.on{opacity:1}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .35s}
+#flash.on{opacity:.95;transition:none}
+#camerr{position:absolute;inset:0;display:grid;place-items:center;color:var(--paper);text-align:center;padding:24px}
+#thumbs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.slot{width:88px;height:66px;border:3px dashed #f4e9d077;background:#0003 center/cover;color:#f4e9d099;font:20px "Black Han Sans";cursor:pointer}
+.slot.cur{border:3px solid var(--gr)}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs .b{flex:1;padding:6px 2px}
+.pane{display:none}.pane.on{display:block}
+.gear{display:none;grid-template-columns:repeat(3,1fr);gap:8px;max-height:46vh;overflow:auto;padding:2px 4px 8px 2px}
+.pane.on.gear{display:grid}
+.ic{display:flex;flex-direction:column;align-items:center;font-size:12px;padding:3px}
+.ic img{width:64px;height:64px}
+.rg{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:8px;margin:9px 0;font-weight:700}
+input[type=range]{accent-color:var(--or);width:100%}
+input[type=text]{font:inherit;width:100%;padding:8px 10px;border:3px solid var(--ink);background:#fff;margin-top:10px}
+.hint{font-size:12px;color:#6b5a48;margin-top:10px}
+.pv{display:flex;justify-content:center;background:#0006;padding:16px;border:3px solid #f4e9d033}
+canvas#cv,canvas#fin{max-width:100%;max-height:76vh;background:#fff;touch-action:none;box-shadow:0 10px 30px #000a}
+.fin{display:flex;justify-content:center}
+.cf{position:fixed;top:-40px;pointer-events:none;z-index:9;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+#lmst{font-size:12px;color:var(--gr);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="bar"></div>
+<header>
+  <h1><small>PHOTO BOOTH · OPEN 24H</small>인생네컷 포토부스</h1>
+  <ol id="prog"><li>01 설정</li><li>02 촬영</li><li>03 꾸미기</li><li>04 저장</li></ol>
+</header>
+<main>
+
+<section class="step" data-s="1">
+  <div class="card" style="max-width:560px">
+    <h2>몇 컷 찍을까요?</h2>
+    <div class="opts" id="o-count"><button class="b" data-v="2">2컷</button><button class="b on" data-v="4">4컷</button><button class="b" data-v="6">6컷 (2×3)</button></div>
+    <h2>카운트다운</h2>
+    <div class="opts" id="o-timer"><button class="b on" data-v="3">3초</button><button class="b" data-v="5">5초</button><button class="b" data-v="10">10초</button></div>
+    <div class="row"><button class="b pri" id="go1">부스 입장 →</button></div>
+  </div>
+</section>
+
+<section class="step" data-s="2">
+  <div class="deco">
+    <div>
+      <div class="cam"><canvas id="live" width="800" height="600"></canvas><video id="vid" playsinline muted></video><div id="cd"></div><div id="flash"></div>
+        <p id="camerr" hidden>카메라를 쓸 수 없어요.<br>아래 '사진 불러오기'로 대신할 수 있어요.</p></div>
+      <div id="thumbs"></div>
+      <div class="row">
+        <button class="b" id="back2">← 이전</button>
+        <button class="b pri" id="shootOne">촬영</button>
+        <button class="b" id="shootAll">연속 촬영</button>
+        <label class="btn b">사진 불러오기<input type="file" id="file" accept="image/*" multiple hidden></label>
+        <button class="b pri" id="go2" disabled>꾸미기 →</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <div class="tabs"><button class="b on" data-t="gear">머리띠</button><button class="b" data-t="fx">할로윈 변신</button><button class="b" data-t="beauty">보정</button></div>
+      <div class="pane gear on" data-t="gear" id="gear"></div>
+      <div class="pane" data-t="fx"><div class="chips" id="c-fx"></div><p class="hint">머리띠와 함께 쓸 수 있어요.</p></div>
+      <div class="pane" data-t="beauty" id="beauty"></div>
+      <p id="lmst"></p>
+      <p class="hint">칸을 누르면 그 컷만 다시 찍어요.</p>
+    </div>
+  </div>
+</section>
+
+<section class="step" data-s="3">
+  <div class="deco">
+    <div class="pv"><canvas id="cv"></canvas></div>
+    <div class="ctl">
+      <div class="tabs"><button class="b on" data-t="frame">프레임</button><button class="b" data-t="filter">색감</button><button class="b" data-t="sticker">스티커</button></div>
+      <div class="pane on" data-t="frame"><div class="chips" id="c-frame"></div><input type="text" id="txt" maxlength="18" placeholder="하단 문구"></div>
+      <div class="pane" data-t="filter"><div class="chips" id="c-filter"></div></div>
+      <div class="pane" data-t="sticker">
+        <div class="chips" id="c-mood"></div>
+        <div class="chips" id="c-emoji" style="margin-top:12px"></div>
+        <div class="chips" style="margin-top:14px"><button class="b" id="stSm">작게</button><button class="b" id="stLg">크게</button><button class="b" id="stDel">삭제</button><button class="b" id="stUndo">되돌리기</button><button class="b" id="stRand">랜덤 뿌리기</button></div>
+        <p class="hint">누르면 추가돼요. 사진 위에서 드래그해 옮기세요.</p>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="justify-content:center"><button class="b" id="back3">← 다시 촬영</button><button class="b pri" id="go3">완성 →</button></div>
+</section>
+
+<section class="step" data-s="4">
+  <div class="fin"><canvas id="fin"></canvas></div>
+  <div class="row" style="justify-content:center"><button class="b" id="back4">← 꾸미기</button><button class="b pri" id="save">PNG 저장</button><button class="b" id="share">공유</button><button class="b" id="again">처음부터</button></div>
+</section>
+</main>
+
+<script>
+/* ============ 데이터: 여기에 항목을 추가하면 UI에 자동 반영 ============ */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const R=s=>()=>(s=s*16807%2147483647)/2147483647;
+const mk=(w,h)=>Object.assign(document.createElement('canvas'),{width:w,height:h});
+const cover=(x,s,sw,sh,dx,dy,dw,dh)=>{const r=Math.max(dw/sw,dh/sh),w=dw/r,h=dh/r;x.drawImage(s,(sw-w)/2,(sh-h)/2,w,h,dx,dy,dw,dh)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---- 그리기 도구 ---- */
+const E=(c,x,y,rx,ry,rot,f)=>{c.save();c.translate(x,y);c.rotate(rot);c.beginPath();c.ellipse(0,0,rx,ry,0,0,7);c.fillStyle=f;c.fill();c.restore()};
+const T=(c,p,f)=>{c.beginPath();p.forEach((q,i)=>c[i?'lineTo':'moveTo'](q[0],q[1]));c.closePath();c.fillStyle=f;c.fill()};
+const PR=(c,fn)=>{fn(c);c.save();c.scale(-1,1);fn(c);c.restore()};
+const BAND=(c,col)=>{c.beginPath();c.moveTo(-82,34);c.quadraticCurveTo(0,-110,82,34);c.lineWidth=11;c.lineCap='round';c.strokeStyle=col;c.stroke()};
+const NOSE=(c,col)=>E(c,0,-2,16,11,0,col);
+const WH=c=>{c.strokeStyle='#1e140acc';c.lineWidth=3;c.lineCap='round';PR(c,d=>[-4,8,20].forEach(y=>{d.beginPath();d.moveTo(-40,y);d.lineTo(-105,y*1.6-6);d.stroke()}))};
+const STAR=(c,x,y,r,f)=>{c.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,d=i%2?r*.45:r;c[i?'lineTo':'moveTo'](x+Math.cos(a)*d,y+Math.sin(a)*d)}c.closePath();c.fillStyle=f;c.fill()};
+const PUMP=(c,x,y,s)=>{c.save();c.translate(x,y);c.scale(s,s);E(c,-22,0,26,30,0,'#e85d04');E(c,22,0,26,30,0,'#e85d04');E(c,0,0,24,32,0,'#ff8c1a');c.fillStyle='#3a5a1e';c.fillRect(-4,-46,9,17);T(c,[[-18,-8],[-8,-8],[-13,-19]],'#2a1400');T(c,[[8,-8],[18,-8],[13,-19]],'#2a1400');T(c,[[-18,8],[-10,19],[-4,9],[4,19],[10,9],[18,8],[0,27]],'#2a1400');c.restore()};
+const BAT=(c,x,y,s,t,col='#14101c')=>{c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=col;const f=.7+Math.sin(t*10)*.3;PR(c,d=>{d.save();d.scale(1,f);d.beginPath();d.moveTo(0,-4);d.quadraticCurveTo(-28,-32,-48,-4);d.quadraticCurveTo(-38,-6,-32,6);d.quadraticCurveTo(-22,-2,-14,8);d.quadraticCurveTo(-7,0,0,10);d.fill();d.restore()});E(c,0,0,8,11,0,col);c.restore()};
+const WEB=(c,x,y,s,dx,dy)=>{const A=[0,.31,.63,.94,1.26,1.57];c.save();c.translate(x,y);c.scale(dx*s,dy*s);c.strokeStyle='#ffffff99';c.lineWidth=2/s;A.forEach(a=>{c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a),Math.sin(a));c.stroke()});[.25,.5,.75,1].forEach(r=>{c.beginPath();A.forEach((a,i)=>c[i?'lineTo':'moveTo'](Math.cos(a)*r,Math.sin(a)*r));c.stroke()});c.restore()};
+const SPID=(c,x,len)=>{c.strokeStyle='#ffffffb0';c.lineWidth=2;c.beginPath();c.moveTo(x,0);c.lineTo(x,len);c.stroke();c.strokeStyle='#000';c.lineWidth=3;[-1,1].forEach(d=>[0,1,2].forEach(k=>{c.beginPath();c.moveTo(x,len+10);c.lineTo(x+d*(20+k*3),len+k*9-4);c.stroke()}));E(c,x,len+10,11,13,0,'#000');E(c,x-4,len+6,2.5,2.5,0,'#ff6a00');E(c,x+4,len+6,2.5,2.5,0,'#ff6a00')};
+const TOMB=(c,x,y,w,h)=>{c.beginPath();c.moveTo(x-w/2,y);c.lineTo(x-w/2,y-h+w/2);c.arc(x,y-h+w/2,w/2,Math.PI,0);c.lineTo(x+w/2,y);c.closePath();c.fillStyle='#55665d';c.fill();c.strokeStyle='#2b3832';c.lineWidth=3;c.stroke();c.fillStyle='#2b3832';c.font=`${w*.3}px "Black Han Sans"`;c.textAlign='center';c.fillText('RIP',x,y-h*.45)};
+
+/* ---- 머리띠 (g:분류, h:머리 위 그리기, f:코/수염 등 얼굴 그리기, fl:둥둥 뜨기) ---- */
+const GEAR=[
+ {g:'동물',n:'강아지',h:c=>{BAND(c,'#c98b4f');PR(c,d=>{E(d,-90,30,21,46,.3,'#8a5a34');E(d,-88,32,11,32,.3,'#b07848')})},f:c=>{NOSE(c,'#2a1a12');E(c,-4,-6,5,3,0,'#fff8')}},
+ {g:'동물',n:'고양이',h:c=>{BAND(c,'#222');PR(c,d=>{T(d,[[-82,8],[-76,-74],[-30,-8]],'#2b2b33');T(d,[[-72,-4],[-70,-52],[-44,-10]],'#ff9fb5')})},f:c=>{T(c,[[-9,-6],[9,-6],[0,6]],'#ff7d98');WH(c)}},
+ {g:'동물',n:'토끼',h:c=>{BAND(c,'#fff');PR(c,d=>{E(d,-38,-66,15,62,-.18,'#fff');E(d,-38,-64,8,48,-.18,'#ffb3c6')})},f:c=>NOSE(c,'#ff8fa8')},
+ {g:'동물',n:'곰',h:c=>{BAND(c,'#8a5a34');PR(c,d=>{E(d,-66,-16,25,25,0,'#8a5a34');E(d,-66,-16,13,13,0,'#d9a76b')})},f:c=>NOSE(c,'#2a1a12')},
+ {g:'동물',n:'여우',h:c=>{BAND(c,'#e8751a');PR(c,d=>{T(d,[[-84,8],[-72,-88],[-26,-6]],'#e8751a');T(d,[[-72,-4],[-68,-58],[-44,-10]],'#fff1dc')})},f:c=>NOSE(c,'#2a1a12')},
+ {g:'할로윈',n:'마녀모자',h:c=>{E(c,0,-6,120,22,0,'#17141f');c.beginPath();c.moveTo(-64,-10);c.lineTo(-14,-170);c.quadraticCurveTo(10,-215,54,-192);c.lineTo(66,-10);c.closePath();c.fillStyle='#17141f';c.fill();T(c,[[-57,-38],[58,-38],[65,-12],[-64,-12]],'#ff6a00');c.fillStyle='#ffd23f';c.fillRect(-12,-40,26,30)}},
+ {g:'할로윈',n:'악마뿔',h:c=>{BAND(c,'#3a0a0a');PR(c,d=>{d.beginPath();d.moveTo(-70,6);d.quadraticCurveTo(-100,-44,-66,-90);d.quadraticCurveTo(-56,-44,-38,-2);d.closePath();d.fillStyle='#d62828';d.fill()})}},
+ {g:'할로윈',n:'호박',fl:1,h:c=>PUMP(c,0,-64,1.15)},
+ {g:'할로윈',n:'박쥐',fl:1,h:(c,t)=>{BAT(c,-70,-82,1.1,t);BAT(c,70,-82,1.1,t+1);BAT(c,0,-125,.8,t+2)}},
+ {g:'캐릭터',n:'왕관',h:c=>{c.beginPath();c.moveTo(-62,-2);c.lineTo(-68,-64);c.lineTo(-34,-34);c.lineTo(0,-80);c.lineTo(34,-34);c.lineTo(68,-64);c.lineTo(62,-2);c.closePath();c.fillStyle='#ffc933';c.fill();c.strokeStyle='#c98a00';c.lineWidth=4;c.stroke();[[-68,-64],[0,-80],[68,-64]].forEach(q=>E(c,q[0],q[1],7,7,0,'#e63946'))}},
+ {g:'캐릭터',n:'천사링',fl:1,h:c=>{c.save();c.shadowColor='#ffe066';c.shadowBlur=16;c.beginPath();c.ellipse(0,-78,56,14,0,0,7);c.lineWidth=9;c.strokeStyle='#ffd84a';c.stroke();c.restore()}},
+ {g:'캐릭터',n:'별 더듬이',fl:1,h:c=>{BAND(c,'#ff5d8f');c.strokeStyle='#ff5d8f';c.lineWidth=5;PR(c,d=>{d.beginPath();d.moveTo(-34,-10);d.quadraticCurveTo(-60,-50,-54,-92);d.stroke();STAR(d,-54,-100,20,'#ffd23f')})}}
+];
+/* ---- 할로윈 변신 (얼굴 위 효과) ---- */
+const OVAL=[10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+const LIPS=[61,146,91,181,84,17,314,405,321,375,291,409,270,269,267,0,37,39,40,185];
+const path=(x,p,ids)=>{x.beginPath();ids.forEach((i,k)=>x[k?'lineTo':'moveTo'](p[i].x,p[i].y));x.closePath()};
+const FXS={
+ none:{n:'없음'},
+ zombie:{n:'좀비',f:(x,p,w)=>{x.save();path(x,p,OVAL);x.globalCompositeOperation='multiply';x.fillStyle='#82b45a99';x.fill();x.restore();[145,374].forEach(i=>E(x,p[i].x,p[i].y+w*.03,w*.1,w*.04,0,'#280a3c66'))}},
+ vampire:{n:'뱀파이어',f:(x,p,w)=>{x.save();path(x,p,OVAL);x.fillStyle='#ffffff33';x.fill();x.restore();const a=p[61],b=p[291],y=p[13].y;[.3,.7].forEach(k=>{const X=a.x+(b.x-a.x)*k,h=w*.11;T(x,[[X-w*.025,y],[X+w*.025,y],[X,y+h]],'#fff')});x.strokeStyle='#b00020';x.lineCap='round';x.lineWidth=w*.03;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(a.x-w*.01,a.y+w*.3);x.stroke();E(x,a.x-w*.01,a.y+w*.32,w*.03,w*.04,0,'#b00020')}},
+ ghost:{n:'유령',f:(x,p,w)=>{x.save();path(x,p,OVAL);x.fillStyle='#f5f5ff99';x.fill();x.restore();[468,473].forEach(i=>E(x,p[i].x,p[i].y,w*.05,w*.075,0,'#0a0a19e6'));E(x,p[14].x,p[14].y+w*.02,w*.05,w*.08,0,'#0a0a19e6')}},
+ jack:{n:'잭오랜턴',f:(x,p,w)=>{x.save();path(x,p,OVAL);x.globalCompositeOperation='multiply';x.fillStyle='#ff8c1ea6';x.fill();x.restore();x.save();x.shadowColor='#ffcf33';x.shadowBlur=22;[468,473].forEach(i=>{const q=p[i],s=w*.07;T(x,[[q.x-s,q.y+s*.7],[q.x,q.y-s],[q.x+s,q.y+s*.7]],'#ffe066')});x.restore()}}
+};
+/* ---- 프레임 (bgd: 사진 뒤 장식 / fgd: 사진 앞 장식) ---- */
+const FRAMES=[
+ {n:'할로윈 밤',bg:'#160b26',fg:'#ff8a1f',edge:'#ff6a00',
+  bgd:(c,W,H)=>{const r=R(7);for(let i=0;i<50;i++)STAR(c,r()*W,r()*H,3+r()*5,'#ffc85088');BAT(c,70,H-70,.9,0,'#ff8a1f');BAT(c,W-150,H-95,.7,0,'#ff8a1f');E(c,W-75,H-70,34,34,0,'#ffe9a8');E(c,W-62,H-78,30,30,0,'#160b26')},
+  fgd:(c,W,H)=>{WEB(c,0,0,190,1,1);WEB(c,W,0,190,-1,1);SPID(c,W-120,130);SPID(c,95,80)}},
+ {n:'호박밭',bg:'#ff7a00',fg:'#2a1400',edge:'#2a1400',
+  bgd:(c,W,H)=>{c.fillStyle='#ffffff22';for(let i=-H;i<W;i+=60){c.beginPath();c.moveTo(i,0);c.lineTo(i+30,0);c.lineTo(i+30+H,H);c.lineTo(i+H,H);c.fill()}PUMP(c,80,H-62,.8);PUMP(c,W-80,H-62,.8);BAT(c,W/2,H-12,.6,0,'#2a1400')},
+  fgd:(c,W,H)=>{WEB(c,0,0,150,1,1);WEB(c,W,0,150,-1,1);SPID(c,W-70,70)}},
+ {n:'묘지',bg:'#0f1a14',fg:'#b8f34b',edge:'#b8f34b',
+  bgd:(c,W,H)=>{const g=c.createLinearGradient(0,H-260,0,H);g.addColorStop(0,'#0f1a1400');g.addColorStop(1,'#6fa07a66');c.fillStyle=g;c.fillRect(0,H-260,W,260);E(c,W-80,64,36,36,0,'#f5f1c8');TOMB(c,70,H-14,66,90);TOMB(c,W-70,H-14,66,74);BAT(c,W/2+150,H-100,.7,0,'#b8f34b')},
+  fgd:(c,W,H)=>{WEB(c,0,0,170,1,1);SPID(c,W-100,100)}},
+ {n:'화이트',bg:'#fff',fg:'#222'},
+ {n:'블랙',bg:'#16161a',fg:'#fff'},
+ {n:'핑크',bg:'#ffd1e3',fg:'#c2185b'},
+ {n:'노을',g:['#ffd6a5','#ffadad','#c9b6ff'],fg:'#fff'}
+];
+const FILTERS={
+ none:{n:'원본'},
+ retro:{n:'레트로',sat:.8,con:.9,bri:8,tint:[22,8,-18],vig:.35,grain:14},
+ vivid:{n:'선명하게',sat:1.45,con:1.18},
+ soft:{n:'은은하게',sat:.85,con:.82,bri:22,tint:[8,2,6]},
+ dream:{n:'몽글',sat:1.1,con:.75,bri:30,tint:[14,0,18]},
+ bw:{n:'흑백',sat:0,con:1.2},
+ vintage:{n:'빈티지',sat:.6,con:.95,bri:6,tint:[34,16,-22],vig:.5,grain:20},
+ cool:{n:'청량',sat:1.1,con:1.05,bri:6,tint:[-14,2,18]}
+};
+const MOODS=[
+ {n:'할로윈',e:'🎃 👻 🦇 🕸️ 🍬 🕯️ 💀 🧙'},{n:'큐트',e:'🎀 🧸 🐰 🍓 💖 🌸 🐻 ☁️'},
+ {n:'파티',e:'✨ 🎉 🎈 💫 ⭐ 🥳 🎂 🪩'},{n:'레트로',e:'📼 💿 🌈 ☮️ 📷 🕶️ 🍒 💾'}
+].map(m=>({...m,e:m.e.split(' ')}));
+const BEAUTY=[['skin','피부 보정'],['bright','화사하게'],['eyes','눈 크게'],['blush','볼터치'],['lip','립 틴트']];
+
+/* ============ 상태 ============ */
+const S={step:1,count:4,timer:3,shots:[],gear:-1,fx:'none',beauty:{skin:.4,bright:.25,eyes:.2,blush:.25,lip:0},filter:'none',frame:0,mood:0,stickers:[],sel:-1,text:'LIFE 4 CUTS',stream:null,busy:false};
+const PAD=36,GAP=20,FOOT=130;
+let cache={},L={W:672,H:1000},drag=null,q=0;
+
+/* ============ 얼굴 인식 (MediaPipe Face Landmarker) ============ */
+let LM=null,lastTs=0,lmState='loading';
+(async()=>{try{
+  const B='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14',V=await import(B+'/vision_bundle.mjs'),fs=await V.FilesetResolver.forVisionTasks(B+'/wasm');
+  const o=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:d},runningMode:'VIDEO',numFaces:2});
+  try{LM=await V.FaceLandmarker.createFromOptions(fs,o('GPU'))}catch{LM=await V.FaceLandmarker.createFromOptions(fs,o('CPU'))}
+  lmState='ok'}catch{lmState='fail'}
+  $('#lmst').textContent=lmState==='ok'?'● 얼굴 인식 준비 완료':'● 얼굴 인식을 불러오지 못했어요 (인터넷 연결 확인). 필터 없이 촬영만 가능해요.';
+})();
+const detect=src=>{if(!LM)return[];const t=Math.max(lastTs+1,performance.now());lastTs=t;try{return LM.detectForVideo(src,t).faceLandmarks||[]}catch{return[]}};
+$('#lmst').textContent='○ 얼굴 인식 불러오는 중…';
+
+/* ============ 합성: 영상 + 보정 + 변신 + 머리띠 ============ */
+const snap=mk(800,600),sm=mk(266,200);
+function paint(c,src,sw,sh,mir,faces){
+  const W=800,H=600,x=c.getContext('2d'),B=S.beauty,t=performance.now()/1000;
+  x.save();if(mir){x.translate(W,0);x.scale(-1,1)}cover(x,src,sw,sh,0,0,W,H);x.restore();
+  if(!faces.length)return;
+  if(B.bright){x.save();x.globalCompositeOperation='screen';x.globalAlpha=B.bright*.35;x.fillStyle='#ffe9df';x.fillRect(0,0,W,H);x.restore()}
+  const r=Math.max(W/sw,H/sh),ox=(W-sw*r)/2,oy=(H-sh*r)/2,G=GEAR[S.gear],F=FXS[S.fx];
+  faces.forEach(f=>{
+    const p=f.map(l=>({x:mir?W-(l.x*sw*r+ox):l.x*sw*r+ox,y:l.y*sh*r+oy}));
+    const[a,b]=[p[234],p[454]].sort((m,n)=>m.x-n.x),w=Math.hypot(b.x-a.x,b.y-a.y),ang=Math.atan2(b.y-a.y,b.x-a.x),u=w/200;
+    if(B.skin){sm.getContext('2d').drawImage(c,0,0,266,200);x.save();path(x,p,OVAL);x.clip();x.globalAlpha=B.skin*.75;x.drawImage(sm,0,0,W,H);x.restore()}
+    if(B.eyes&&p[473]){snap.getContext('2d').drawImage(c,0,0);[[468,33,133],[473,362,263]].forEach(([i,m,n])=>{const e=p[i],Rr=Math.hypot(p[m].x-p[n].x,p[m].y-p[n].y)*.95,s=1+B.eyes*.35;x.save();x.beginPath();x.arc(e.x,e.y,Rr,0,7);x.clip();x.drawImage(snap,e.x-Rr/s,e.y-Rr/s,2*Rr/s,2*Rr/s,e.x-Rr,e.y-Rr,2*Rr,2*Rr);x.restore()})}
+    if(B.blush)[205,425].forEach(i=>{const e=p[i],Rr=w*.17,g=x.createRadialGradient(e.x,e.y,0,e.x,e.y,Rr);g.addColorStop(0,`rgba(255,80,110,${B.blush*.5})`);g.addColorStop(1,'rgba(255,80,110,0)');x.fillStyle=g;x.fillRect(e.x-Rr,e.y-Rr,2*Rr,2*Rr)});
+    if(B.lip){x.save();path(x,p,LIPS);x.fillStyle=`rgba(200,20,60,${B.lip*.55})`;x.fill();x.restore()}
+    if(F.f&&p[473])F.f(x,p,w);
+    if(G){
+      x.save();x.translate(p[10].x,p[10].y);x.rotate(ang);x.scale(u,u);x.translate(0,6+(G.fl?Math.sin(t*3)*7:0));G.h(x,t);x.restore();
+      if(G.f){x.save();x.translate(p[1].x,p[1].y);x.rotate(ang);x.scale(u,u);G.f(x);x.restore()}
+    }
+  });
+}
+const live=$('#live'),vid=$('#vid');
+(function loop(){
+  if(S.step===2&&S.stream&&vid.videoWidth)paint(live,vid,vid.videoWidth,vid.videoHeight,true,detect(vid));
+  requestAnimationFrame(loop);
+})();
+
+/* ============ 단계 이동 ============ */
+function go(n){
+  S.step=n;
+  $$('.step').forEach(s=>s.classList.toggle('on',+s.dataset.s===n));
+  $$('#prog li').forEach((li,i)=>{li.classList.toggle('on',i+1===n);li.classList.toggle('done',i+1<n)});
+  if(n===2){startCam();thumbs()}else stopCam();
+  if(n===3){S.sel=-1;draw()}
+  if(n===4)render($('#fin'),false);
+  scrollTo(0,0);
+}
+function pick(sel,key){$(sel).onclick=e=>{const b=e.target.closest('button');if(!b)return;$$(sel+' button').forEach(x=>x.classList.toggle('on',x===b));S[key]=+b.dataset.v;if(key==='count'){S.shots.length=Math.min(S.shots.length,S.count);cache={}}}}
+pick('#o-count','count');pick('#o-timer','timer');
+$('#go1').onclick=()=>go(2);$('#back2').onclick=()=>go(1);$('#go2').onclick=()=>go(3);
+$('#back3').onclick=()=>go(2);$('#go3').onclick=()=>{go(4);confetti()};$('#back4').onclick=()=>go(3);
+$('#again').onclick=()=>{S.shots=[];S.stickers=[];S.sel=-1;cache={};go(1)};
+$$('.tabs').forEach(tb=>tb.onclick=e=>{const b=e.target.closest('button');if(!b)return;const c=tb.parentElement;c.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));c.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.t===b.dataset.t))});
+
+/* ============ 효과음 / 컨페티 ============ */
+let ac;
+function beep(f,d){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch{}}
+function confetti(){const e=MOODS[S.mood].e;for(let i=0;i<28;i++){const s=document.createElement('span');s.className='cf';s.textContent=e[i%e.length];s.style.cssText=`left:${Math.random()*100}vw;animation-delay:${Math.random()*.5}s;font-size:${20+Math.random()*22}px`;document.body.append(s);setTimeout(()=>s.remove(),2800)}}
+
+/* ============ 카메라 / 촬영 ============ */
+async function startCam(){
+  if(S.stream)return;
+  try{S.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:960}},audio:false});vid.srcObject=S.stream;await vid.play();$('#camerr').hidden=true}
+  catch{$('#camerr').hidden=false}
+}
+const stopCam=()=>{S.stream?.getTracks().forEach(t=>t.stop());S.stream=null};
+function grab(i){if(!S.stream||!vid.videoWidth)return;const c=mk(800,600);c.getContext('2d').drawImage(live,0,0);S.shots[i]=c;cache={}}
+async function shoot(i){
+  const cd=$('#cd');
+  for(let t=S.timer;t>0;t--){cd.textContent=t;cd.classList.add('on');beep(520,.08);await sleep(1000)}
+  cd.classList.remove('on');$('#flash').classList.add('on');beep(880,.15);grab(i);
+  setTimeout(()=>$('#flash').classList.remove('on'),60);await sleep(700);
+}
+function lock(b){S.busy=b;$$('[data-s="2"] button').forEach(x=>x.disabled=b);if(!b)thumbs()}
+const markCur=i=>$$('.slot').forEach((s,k)=>s.classList.toggle('cur',k===i));
+async function retake(i){if(S.busy||!S.stream)return;lock(true);markCur(i);await shoot(i);lock(false)}
+$('#shootOne').onclick=async()=>{ // 한 컷만 찍고 멈춤 → 필터 바꾼 뒤 다음 컷
+  if(S.busy||!S.stream)return;
+  const i=Array.from({length:S.count},(_,k)=>k).find(k=>!S.shots[k]);
+  if(i===undefined)return;
+  lock(true);markCur(i);await shoot(i);lock(false);
+};
+$('#shootAll').onclick=async()=>{if(S.busy||!S.stream)return;lock(true);for(let i=0;i<S.count;i++){markCur(i);await shoot(i)}lock(false)};
+function thumbs(){
+  const box=$('#thumbs');box.innerHTML='';
+  for(let i=0;i<S.count;i++){const b=document.createElement('button');b.className='slot';if(S.shots[i])b.style.backgroundImage=`url(${S.shots[i].toDataURL('image/jpeg',.5)})`;else b.textContent=i+1;b.onclick=()=>retake(i);box.append(b)}
+  const n=Array.from({length:S.count},(_,i)=>S.shots[i]).filter(Boolean).length,o=$('#shootOne');
+  o.textContent=n<S.count?`촬영 ${n+1}/${S.count}`:'촬영 완료';o.disabled=n>=S.count;
+  $('#go2').disabled=n<S.count;
+}
+$('#file').onchange=async e=>{ // 불러온 사진에도 같은 얼굴 필터 적용
+  let i=0;
+  for(const f of e.target.files){
+    while(i<S.count&&S.shots[i])i++;if(i>=S.count)break;
+    const im=await new Promise(r=>{const m=new Image();m.onload=()=>r(m);m.src=URL.createObjectURL(f)});
+    const c=mk(800,600);paint(c,im,im.naturalWidth,im.naturalHeight,false,detect(im));S.shots[i]=c;
+  }
+  cache={};e.target.value='';thumbs();
+};
+
+/* ============ 촬영 패널 UI ============ */
+const ICON=GEAR.map(it=>{const c=mk(76,76),x=c.getContext('2d');x.translate(38,54);x.scale(.24,.24);it.h(x,0);return c.toDataURL()});
+function buildGear(){
+  const box=$('#gear');box.innerHTML='';
+  const add=(label,img,i)=>{const b=document.createElement('button');b.className='b ic'+(S.gear===i?' on':'');if(img){const m=new Image();m.src=img;b.append(m)}b.append(label);b.onclick=()=>{S.gear=i;buildGear()};box.append(b)};
+  add('없음','',-1);let g='';
+  GEAR.forEach((it,i)=>{if(it.g!==g){g=it.g;const h=document.createElement('h3');h.textContent=g;box.append(h)}add(it.n,ICON[i],i)});
+}
+const buildFx=()=>chips('#c-fx',Object.entries(FXS).map(([k,f])=>[k,f.n]),()=>S.fx,k=>S.fx=k);
+BEAUTY.forEach(([k,n])=>{const d=document.createElement('label');d.className='rg';d.innerHTML=`${n}<input type="range" min="0" max="100" value="${S.beauty[k]*100}">`;d.querySelector('input').oninput=e=>S.beauty[k]=e.target.value/100;$('#beauty').append(d)});
+
+/* ============ 색감 필터 (픽셀 연산: Safari 호환) ============ */
+function applyFilter(c,k){
+  if(k==='none')return;
+  const{sat=1,con=1,bri=0,tint=[0,0,0],vig=0,grain=0}=FILTERS[k],x=c.getContext('2d'),im=x.getImageData(0,0,c.width,c.height),d=im.data;
+  for(let i=0;i<d.length;i+=4){
+    let r=(d[i]+bri-128)*con+128,g=(d[i+1]+bri-128)*con+128,b=(d[i+2]+bri-128)*con+128;
+    const y=.299*r+.587*g+.114*b,n=grain?(Math.random()-.5)*grain:0;
+    d[i]=y+(r-y)*sat+tint[0]+n;d[i+1]=y+(g-y)*sat+tint[1]+n;d[i+2]=y+(b-y)*sat+tint[2]+n;
+  }
+  x.putImageData(im,0,0);
+  if(vig){const g=x.createRadialGradient(c.width/2,c.height/2,c.width*.25,c.width/2,c.height/2,c.width*.7);g.addColorStop(0,'#0000');g.addColorStop(1,`rgba(0,0,0,${vig})`);x.fillStyle=g;x.fillRect(0,0,c.width,c.height)}
+}
+function cell(i,w,h){
+  const k=`${S.filter}|${i}|${w}`;
+  if(!cache[k]){const c=mk(w,h);cover(c.getContext('2d'),S.shots[i],800,600,0,0,w,h);applyFilter(c,S.filter);cache[k]=c}
+  return cache[k];
+}
+
+/* ============ 최종 합성 ============ */
+function render(c,ui){
+  const n=S.count,cols=n===6?2:1,rows=Math.ceil(n/cols),W=672,cw=cols===2?290:600,ch=Math.round(cw*.75),H=PAD*2+rows*ch+(rows-1)*GAP+FOOT;
+  c.width=W;c.height=H;L={W,H};
+  const x=c.getContext('2d'),F=FRAMES[S.frame];
+  if(F.g){const g=x.createLinearGradient(0,0,W,H);F.g.forEach((k,i)=>g.addColorStop(i/(F.g.length-1),k));x.fillStyle=g}else x.fillStyle=F.bg;
+  x.fillRect(0,0,W,H);F.bgd?.(x,W,H);
+  for(let i=0;i<n;i++){
+    const px=PAD+(i%cols)*(cw+GAP),py=PAD+Math.floor(i/cols)*(ch+GAP);
+    if(S.shots[i])x.drawImage(cell(i,cw,ch),px,py);else{x.fillStyle='#0002';x.fillRect(px,py,cw,ch)}
+    if(F.edge){x.strokeStyle=F.edge;x.lineWidth=6;x.strokeRect(px-3,py-3,cw+6,ch+6)}
+  }
+  F.fgd?.(x,W,H);
+  const d=new Date(),ds=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  x.textAlign='center';x.textBaseline='middle';x.fillStyle=F.fg;
+  x.font='44px "Black Han Sans","Apple SD Gothic Neo",sans-serif';x.fillText(S.text,W/2,H-FOOT/2-6);
+  x.globalAlpha=.75;x.font='22px monospace';x.fillText(ds,W/2,H-FOOT/2+34);x.globalAlpha=1;
+  S.stickers.forEach((t,i)=>{
+    x.font=`${t.s*W}px "Apple Color Emoji","Segoe UI Emoji",serif`;x.fillText(t.e,t.x*W,t.y*H);
+    if(ui&&i===S.sel){const r=t.s*W*.6;x.save();x.setLineDash([8,6]);x.lineWidth=3;x.strokeStyle='#ff6a00';x.strokeRect(t.x*W-r,t.y*H-r,r*2,r*2);x.restore()}
+  });
+}
+const cv=$('#cv'),draw=()=>{cancelAnimationFrame(q);q=requestAnimationFrame(()=>render(cv,true))};
+document.fonts?.load('44px "Black Han Sans"').then(draw);
+
+/* ============ 꾸미기 UI ============ */
+function chips(sel,items,cur,fn,after){
+  const box=$(sel);box.innerHTML='';
+  items.forEach(([k,label])=>{const b=document.createElement('button');b.textContent=label;b.className='b'+(String(k)===String(cur())?' on':'');b.onclick=()=>{fn(k);chips(sel,items,cur,fn,after);after?.()};box.append(b)});
+}
+const buildFrames=()=>chips('#c-frame',FRAMES.map((f,i)=>[i,f.n]),()=>S.frame,k=>S.frame=k,draw);
+const buildFilters=()=>chips('#c-filter',Object.entries(FILTERS).map(([k,f])=>[k,f.n]),()=>S.filter,k=>S.filter=k,draw);
+function buildMoods(){
+  chips('#c-mood',MOODS.map((m,i)=>[i,m.n]),()=>S.mood,k=>S.mood=k,buildMoods);
+  const box=$('#c-emoji');box.innerHTML='';
+  MOODS[S.mood].e.forEach(e=>{const b=document.createElement('button');b.className='b';b.style.fontSize='22px';b.textContent=e;b.onclick=()=>addSt(e);box.append(b)});
+}
+const addSt=(e,rand)=>{S.stickers.push({e,x:rand?Math.random()*.8+.1:.3+Math.random()*.4,y:rand?Math.random()*.9+.05:.3+Math.random()*.4,s:.12+Math.random()*.05});S.sel=S.stickers.length-1;draw()};
+$('#txt').value=S.text;$('#txt').oninput=e=>{S.text=e.target.value;draw()};
+$('#stSm').onclick=()=>{const t=S.stickers[S.sel];if(t){t.s=Math.max(.05,t.s*.85);draw()}};
+$('#stLg').onclick=()=>{const t=S.stickers[S.sel];if(t){t.s=Math.min(.6,t.s*1.18);draw()}};
+$('#stDel').onclick=()=>{if(S.sel>=0){S.stickers.splice(S.sel,1);S.sel=-1;draw()}};
+$('#stUndo').onclick=()=>{S.stickers.pop();S.sel=-1;draw()};
+$('#stRand').onclick=()=>{const e=MOODS[S.mood].e;for(let i=0;i<6;i++)addSt(e[Math.random()*e.length|0],true);S.sel=-1;draw()};
+const pos=ev=>{const r=cv.getBoundingClientRect();return{x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height}};
+cv.onpointerdown=ev=>{
+  const p=pos(ev);S.sel=-1;
+  for(let i=S.stickers.length-1;i>=0;i--){const t=S.stickers[i];if(Math.hypot((p.x-t.x)*L.W,(p.y-t.y)*L.H)<t.s*L.W*.6){S.sel=i;drag={dx:t.x-p.x,dy:t.y-p.y};cv.setPointerCapture(ev.pointerId);break}}
+  draw();
+};
+cv.onpointermove=ev=>{if(!drag||S.sel<0)return;const p=pos(ev),t=S.stickers[S.sel];t.x=p.x+drag.dx;t.y=p.y+drag.dy;draw()};
+cv.onpointerup=()=>drag=null;
+
+/* ============ 저장 / 공유 ============ */
+const fname=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return`life4cuts-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.png`};
+$('#save').onclick=()=>$('#fin').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fname();a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);confetti()});
+$('#share').onclick=()=>$('#fin').toBlob(async b=>{const f=new File([b],fname(),{type:'image/png'});if(navigator.canShare?.({files:[f]}))try{await navigator.share({files:[f]})}catch{}else alert('이 브라우저는 공유를 지원하지 않아요. PNG 저장을 이용해 주세요.')});
+
+buildGear();buildFx();buildFrames();buildFilters();buildMoods();go(1);
+</script>
+</body>
+</html>
